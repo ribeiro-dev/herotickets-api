@@ -1,5 +1,6 @@
 import express, { Application, urlencoded } from 'express';
 import { connectDatabase } from './infra/database';
+import { errorMiddleware } from './middlewares/error.middlewares';
 
 class App {
    public app: Application;
@@ -17,7 +18,7 @@ class App {
    }
 
    interceptErrors() {
-      // this.app.use();
+      this.app.use(errorMiddleware);
    }
 
    initializeMiddlewares() {
