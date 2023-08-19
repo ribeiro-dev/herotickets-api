@@ -8,7 +8,7 @@ export async function connectDatabase() {
    const database = process.env.DB_NAME
 
    try {
-      await mongoose.connect(`mongodb+srv://${user}:${password}@cluster0.cynmn1m.mongodb.net/?retryWrites=true&w=majority/${database}`)
+      await mongoose.connect(`mongodb+srv://${user}:${password}@cluster0.cynmn1m.mongodb.net/${database}`)
       console.log("Database connected!");
    } catch (error) {
       console.log("file: database.ts:5 ~ connect ~error:", error);
