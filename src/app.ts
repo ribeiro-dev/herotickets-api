@@ -15,15 +15,15 @@ class App {
       connectDatabase();
    }
 
-   initializeRoutes() {
+   private initializeRoutes() {
       this.app.use('/events', this.eventRoutes.router);
    }
 
-   interceptErrors() {
+   private interceptErrors() {
       this.app.use(errorMiddleware);
    }
 
-   initializeMiddlewares() {
+   private initializeMiddlewares() {
       this.app.use(express.json());
       this.app.use(urlencoded({ extended: true }))
    }
