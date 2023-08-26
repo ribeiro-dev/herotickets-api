@@ -2,7 +2,7 @@ Hero Tickets
 
 # Back-end
 
-- [] Criar evento
+- [x] Criar evento
 - [] Buscar eventos por localização
 - [] Buscar eventos por categoria
 - [] Buscar eventos por nome
