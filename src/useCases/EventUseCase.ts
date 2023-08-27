@@ -3,12 +3,14 @@ import { HttpException } from "../interfaces/HttpException";
 import { EventRepository } from "../repositories/EventRepository";
 
 import axios from "axios";
+import { UserRepositoryMongoose } from "../repositories/UserRepositoryMongoose";
 
 class EventUseCase {
    constructor(private eventRepository: EventRepository) {
    }
 
    async create(eventData: Event) {
+      if (!eventData.date) throw new HttpException(400, 'Date is required');
       if (!eventData.banner) throw new HttpException(400, 'Banner is required');
       if (!eventData.flyers) throw new HttpException(400, 'Flyers is required');
       if (!eventData.location) throw new HttpException(400, 'Location is required');
@@ -51,6 +53,45 @@ class EventUseCase {
       const events = await this.eventRepository.findEventsByCategory(category);
 
       return events;
+   }
+
+   async findEventsByName(name: string) {
+      if (!name) throw new HttpException(400, 'Name is required');
+      const events = await this.eventRepository.findEventsByName(name);
+
+      return events;
+   }
+
+   async findEventById(id: string) {
+      if (!id) throw new HttpException(400, 'Id is required');
+      const events = await this.eventRepository.findEventById(id);
+
+      return events;
+   }
+
+   async addParticipant(id: string, name: string, email: string) {
+      const event = await this.eventRepository.findEventById(id);
+      if (!event) throw new HttpException(400, 'Event not found');
+
+      const userRepository = new UserRepositoryMongoose();
+      const participant = { name, email };
+      let user: any = {};
+
+      const userExists = await userRepository.verifyIfUserExists(email);
+      // if (!userExists) {
+      //    user = userRepository.add(participant);
+      // } else {
+      //    user = userExists;
+      // }
+      user = userExists ? userExists : userRepository.add(participant);
+      if (event.participants.includes(user._id))
+         throw new HttpException(400, 'User already exists');
+
+      event.participants.push(user._id);
+
+      const updateEvent = await this.eventRepository.update(event, id);
+      console.log("🚀 ~ file: EventUseCase.ts:82 ~ EventUseCase ~ addParticipant ~ updateEvent:", updateEvent);
+      return event;
    }
 
    private async getCityNameByCoordinates(latitude: string, longitude: string) {
